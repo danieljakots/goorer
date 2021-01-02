@@ -6,7 +6,7 @@ earnings:
 spendings:
 - date: 2020-12-01
   amount: 1234
-  with: Rent
+  with: rent
 - date: 2020-12-25
   amount: 42.24
   with: cat food shop
