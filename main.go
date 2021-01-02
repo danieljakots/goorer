@@ -14,9 +14,10 @@ import (
 const dataPath = "testdata/"
 
 type moneyExchange struct {
-	Amount float64
-	Date   time.Time
-	With   string
+	Amount   float64
+	Date     time.Time
+	With     string
+	Category string
 }
 
 func readCategoriesFile(categoriesFilePath string) (map[string]string, error) {
@@ -133,7 +134,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	entries := make(map[string][]moneyExchange)
+	e := make(map[string][]moneyExchange)
 	for _, file := range files {
 		fmt.Println(file.Name())
 		if file.Name() == "categories.yml" {
@@ -144,18 +145,25 @@ func main() {
 		if err != nil {
 			log.Fatal("Couldn't parse records file: ", err)
 		}
-		for _, spending := range(fileEntries["spendings"]) {
-			entries["spendings"] = append(entries["spendings"], spending)
+		for _, spending := range fileEntries["spendings"] {
+			e["spendings"] = append(e["spendings"], spending)
 		}
-		for _, earning := range(fileEntries["earnings"]) {
-			entries["earnings"] = append(entries["earnings"], earning)
+		for _, earning := range fileEntries["earnings"] {
+			e["earnings"] = append(e["earnings"], earning)
 		}
 	}
-	fmt.Println(entries)
+	fmt.Println(e)
+
+	// Populate the Category field for each spendings entry
+	if mode != "summary" {
+		for n := range e["spendings"] {
+			e["spendings"][n].Category = categories[e["spendings"][n].With]
+		}
+	}
 
 	switch mode {
 	case "summary":
-		printSummary(date, entries)
+		printSummary(date, e)
 	case "earnings":
 		printEarnings()
 	case "spendings":
