@@ -128,9 +128,28 @@ func main() {
 	}
 	fmt.Println(categories)
 
-	entries, err := readMonthlyFile(dataPath + "december-20.yml")
+	files, err := ioutil.ReadDir(dataPath)
 	if err != nil {
-		log.Fatal("Couldn't parse records file: ", err)
+		log.Fatal(err)
+	}
+
+	entries := make(map[string][]moneyExchange)
+	for _, file := range files {
+		fmt.Println(file.Name())
+		if file.Name() == "categories.yml" {
+			continue
+		}
+		// XXX use FS proper join
+		fileEntries, err := readMonthlyFile(dataPath + file.Name())
+		if err != nil {
+			log.Fatal("Couldn't parse records file: ", err)
+		}
+		for _, spending := range(fileEntries["spendings"]) {
+			entries["spendings"] = append(entries["spendings"], spending)
+		}
+		for _, earning := range(fileEntries["earnings"]) {
+			entries["earnings"] = append(entries["earnings"], earning)
+		}
 	}
 	fmt.Println(entries)
 

@@ -1,0 +1,13 @@
+earnings:
+- date: 2019-11-25
+  amount: 1122
+  with: Company
+
+spendings:
+- date: 2019-11-01
+  amount: 2211
+  with: Rent
+- date: 2019-11-25
+  amount: 69.96
+  with: cat food shop
+
