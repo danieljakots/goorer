@@ -94,17 +94,28 @@ func cli() (string, time.Time, error) {
 }
 
 func printSummary(date time.Time, entries map[string][]moneyExchange) {
-	fmt.Println("summary")
-	var spending float64
+	var spendingSum float64
 	for _, entry := range entries["spendings"] {
-		spending = spending + entry.Amount
+		spendingSum = spendingSum + entry.Amount
 	}
-	var earning float64
+	var earningSum float64
 	for _, entry := range entries["earnings"] {
-		earning = earning + entry.Amount
+		earningSum = earningSum + entry.Amount
 	}
-	fmt.Println(earning)
-	fmt.Println(spending)
+	delta := earningSum - spendingSum
+
+
+	fmt.Printf("You earnt $%.2f\n", earningSum)
+	fmt.Printf("You spent $%.2f\n", spendingSum)
+	if delta > 0 {
+		fmt.Printf("You saved $%.2f\n", delta)
+	} else {
+		fmt.Printf("You overspent $%.2f\n",  -delta)
+	}
+	if earningSum > 0 {
+		fmt.Printf("You spent %.2f%% of your earnings\n",
+			100 * spendingSum / earningSum)
+	}
 
 }
 
