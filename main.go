@@ -95,6 +95,17 @@ func cli() (string, time.Time, error) {
 
 func printSummary(date time.Time, entries map[string][]moneyExchange) {
 	fmt.Println("summary")
+	var spending float64
+	for _, entry := range(entries["spendings"]) {
+		spending = spending + entry.Amount
+	}
+	var earning float64
+	for _, entry := range(entries["earnings"]) {
+		earning = earning + entry.Amount
+	}
+	fmt.Println(earning)
+	fmt.Println(spending)
+
 }
 
 func printEarnings() {
@@ -122,12 +133,6 @@ func main() {
 		log.Fatal("Couldn't parse records file: ", err)
 	}
 	fmt.Println(entries)
-
-	var sum float64
-	for _, spending := range(entries["spendings"]) {
-		sum = sum + spending.Amount
-	}
-	fmt.Println(sum)
 
 	switch mode {
 	case "summary":
