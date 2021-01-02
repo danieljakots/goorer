@@ -78,7 +78,6 @@ func cli() (string, time.Time, error) {
 	var err error
 	switch os.Args[1] {
 	case "summary":
-		fmt.Println(os.Args[2:])
 		summary.Parse(os.Args[2:])
 		date, err = parseArgDate(*dateSummary)
 	case "earnings":
@@ -127,7 +126,6 @@ func main() {
 	if err != nil {
 		log.Fatal("Couldn't parse categories file: ", err)
 	}
-	fmt.Println(categories)
 
 	files, err := ioutil.ReadDir(dataPath)
 	if err != nil {
@@ -136,7 +134,6 @@ func main() {
 
 	e := make(map[string][]moneyExchange)
 	for _, file := range files {
-		fmt.Println(file.Name())
 		if file.Name() == "categories.yml" {
 			continue
 		}
@@ -152,7 +149,6 @@ func main() {
 			e["earnings"] = append(e["earnings"], earning)
 		}
 	}
-	fmt.Println(e)
 
 	// Populate the Category field for each spendings entry
 	if mode != "summary" {
