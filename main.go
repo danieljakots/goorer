@@ -93,17 +93,29 @@ func cli() (string, time.Time, error) {
 	return os.Args[1], date, err
 }
 
+func printSummary(date time.Time, entries map[string][]moneyExchange) {
+	fmt.Println("summary")
+}
+
+func printEarnings() {
+	fmt.Println("earnings")
+}
+
+func printSpendings() {
+	fmt.Println("spendings")
+}
+
 func main() {
-	_, _, err :=cli()
+	mode, date, err :=cli()
 	if err != nil {
 		log.Fatal("Couldn't parse cli: ", err)
 	}
 
-	_, err = readCategoriesFile(dataPath + "categories.yml")
+	categories, err := readCategoriesFile(dataPath + "categories.yml")
 	if err != nil {
 		log.Fatal("Couldn't parse categories file: ", err)
 	}
-	// fmt.Println(categories)
+	fmt.Println(categories)
 
 	entries, err := readMonthlyFile(dataPath + "december-20.yml")
 	if err != nil {
@@ -116,4 +128,15 @@ func main() {
 		sum = sum + spending.Amount
 	}
 	fmt.Println(sum)
+
+	switch mode {
+	case "summary":
+		printSummary(date, entries)
+	case "earnings":
+		printEarnings()
+	case "spendings":
+		printSpendings()
+	default:
+		log.Fatal("How did you end up here pal?")
+	}
 }
