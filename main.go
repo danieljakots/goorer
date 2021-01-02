@@ -15,8 +15,8 @@ const dataPath = "testdata/"
 
 type moneyExchange struct {
 	Amount float64
-	Date time.Time
-	With string
+	Date   time.Time
+	With   string
 }
 
 func readCategoriesFile(categoriesFilePath string) (map[string]string, error) {
@@ -32,7 +32,7 @@ func readCategoriesFile(categoriesFilePath string) (map[string]string, error) {
 	return categories, nil
 }
 
-func readMonthlyFile(monthlyFilePath string) (map[string][]moneyExchange, error){
+func readMonthlyFile(monthlyFilePath string) (map[string][]moneyExchange, error) {
 	m := make(map[string][]moneyExchange)
 
 	yamlFile, err := ioutil.ReadFile(monthlyFilePath)
@@ -96,11 +96,11 @@ func cli() (string, time.Time, error) {
 func printSummary(date time.Time, entries map[string][]moneyExchange) {
 	fmt.Println("summary")
 	var spending float64
-	for _, entry := range(entries["spendings"]) {
+	for _, entry := range entries["spendings"] {
 		spending = spending + entry.Amount
 	}
 	var earning float64
-	for _, entry := range(entries["earnings"]) {
+	for _, entry := range entries["earnings"] {
 		earning = earning + entry.Amount
 	}
 	fmt.Println(earning)
@@ -117,7 +117,7 @@ func printSpendings() {
 }
 
 func main() {
-	mode, date, err :=cli()
+	mode, date, err := cli()
 	if err != nil {
 		log.Fatal("Couldn't parse cli: ", err)
 	}
