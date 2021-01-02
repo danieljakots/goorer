@@ -58,3 +58,40 @@ func TestReadMonthlyFile(t *testing.T) {
 			entries, shouldBe)
 	}
 }
+
+func TestParseArgDate(t *testing.T) {
+	year := "2020"
+	shouldBeYear, err := time.Parse("2006", year)
+	if err != nil {
+		t.Error("time.Parse in TestParseArgDate() failed")
+		t.Fatal(err)
+	}
+
+	result, err := parseArgDate(year)
+	if err != nil {
+		t.Error("parseArgDate(year) gave an error")
+		t.Fatal(err)
+	}
+	if shouldBeYear != result {
+		t.Errorf("parseArgDate(year) result is unexpected: got %v, wanted %v",
+			result, shouldBeYear)
+	}
+
+	yearMonth := "2020-12"
+	shouldBeYearMonth, err := time.Parse("2006-01", yearMonth)
+	if err != nil {
+		t.Error("time.Parse in TestParseArgDate() failed")
+		t.Fatal(err)
+	}
+
+	result, err = parseArgDate(yearMonth)
+	if err != nil {
+		t.Error("parseArgDate(yearMonth) gave an error")
+		t.Fatal(err)
+	}
+	if shouldBeYearMonth != result {
+		t.Error("parseArgDate(yearMonth) result is unexpected:")
+		t.Errorf("got %v, wanted %v", result, shouldBeYearMonth)
+	}
+
+}

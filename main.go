@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"time"
 
 	"gopkg.in/yaml.v2"
@@ -46,8 +47,59 @@ func readMonthlyFile(monthlyFilePath string) (map[string][]moneyExchange, error)
 
 }
 
+func parseArgDate(date string) (time.Time, error) {
+	var timeFormat string
+	if len(date) == 4 {
+		timeFormat = "2006"
+	} else if len(date) == 7 {
+		timeFormat = "2006-01"
+	}
+	return time.Parse(timeFormat, date)
+}
+
+func cli() (string, time.Time, error) {
+	summary := flag.NewFlagSet("summary", flag.ExitOnError)
+	dateSummary := summary.String("date", "",
+		"Focus on entries at given date (YYYY[-MM] format")
+	earnings := flag.NewFlagSet("earnings", flag.ExitOnError)
+	dateEarnings := earnings.String("date", "",
+		"Focus on earnings at given date (YYYY[-MM] format")
+	spendings := flag.NewFlagSet("spendings", flag.ExitOnError)
+	dateSpendings := spendings.String("date", "",
+		"Focus on spendings at given date (YYYY[-MM] format")
+
+	if len(os.Args) < 2 {
+		fmt.Println("expected 'foo' or 'bar' subcommands")
+		os.Exit(1)
+	}
+
+	var date time.Time
+	var err error
+	switch os.Args[1] {
+	case "summary":
+		fmt.Println(os.Args[2:])
+		summary.Parse(os.Args[2:])
+		date, err = parseArgDate(*dateSummary)
+	case "earnings":
+		earnings.Parse(os.Args[2:])
+		date, err = parseArgDate(*dateEarnings)
+	case "spendings":
+		spendings.Parse(os.Args[2:])
+		date, err = parseArgDate(*dateSpendings)
+	default:
+		fmt.Println("Wrong subcommands")
+		os.Exit(1)
+	}
+	return os.Args[1], date, err
+}
+
 func main() {
-	_, err := readCategoriesFile(dataPath + "categories.yml")
+	_, _, err :=cli()
+	if err != nil {
+		log.Fatal("Couldn't parse cli: ", err)
+	}
+
+	_, err = readCategoriesFile(dataPath + "categories.yml")
 	if err != nil {
 		log.Fatal("Couldn't parse categories file: ", err)
 	}
