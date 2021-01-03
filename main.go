@@ -114,17 +114,16 @@ func printSummary(date time.Time, entries map[string][]moneyExchange) {
 	}
 	delta := earningSum - spendingSum
 
-
 	fmt.Printf("You earnt $%.2f\n", earningSum)
 	fmt.Printf("You spent $%.2f\n", spendingSum)
 	if delta > 0 {
 		fmt.Printf("You saved $%.2f\n", delta)
 	} else {
-		fmt.Printf("You overspent $%.2f\n",  -delta)
+		fmt.Printf("You overspent $%.2f\n", -delta)
 	}
 	if earningSum > 0 {
 		fmt.Printf("You spent %.2f%% of your earnings\n",
-			100 * spendingSum / earningSum)
+			100*spendingSum/earningSum)
 	}
 
 }
