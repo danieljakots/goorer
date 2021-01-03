@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -58,6 +59,12 @@ func parseArgDate(date string) (time.Time, error) {
 	return time.Parse(timeFormat, date)
 }
 
+func printHelp() {
+	fmt.Println("usage:", os.Args[0], "[-h] {summary, earnings, spendings} ")
+	fmt.Println("      ", os.Args[0], "each subcommand accepts a -date YYYY[-MM]")
+	os.Exit(1)
+}
+
 func cli() (string, time.Time, error) {
 	summary := flag.NewFlagSet("summary", flag.ExitOnError)
 	dateSummary := summary.String("date", "",
@@ -70,8 +77,9 @@ func cli() (string, time.Time, error) {
 		"Focus on spendings at given date (YYYY[-MM] format")
 
 	if len(os.Args) < 2 {
-		fmt.Println("expected 'foo' or 'bar' subcommands")
-		os.Exit(1)
+		err := errors.New("You need to pick a sucommand. " +
+			"Available subcommands are summary, earnings, and spendings")
+		return "", time.Now(), err
 	}
 
 	var date time.Time
@@ -86,9 +94,11 @@ func cli() (string, time.Time, error) {
 	case "spendings":
 		spendings.Parse(os.Args[2:])
 		date, err = parseArgDate(*dateSpendings)
+	case "-h", "-help", "--help":
+		printHelp()
 	default:
 		fmt.Println("Wrong subcommands")
-		os.Exit(1)
+		printHelp()
 	}
 	return os.Args[1], date, err
 }
@@ -130,7 +140,8 @@ func printSpendings() {
 func main() {
 	mode, date, err := cli()
 	if err != nil {
-		log.Fatal("Couldn't parse cli: ", err)
+		log.Print("Couldn't parse cli: ", err)
+		printHelp()
 	}
 
 	categories, err := readCategoriesFile(dataPath + "categories.yml")
