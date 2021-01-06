@@ -35,7 +35,7 @@ func TestReadMonthlyFile(t *testing.T) {
 		t.Fatal(err)
 	}
 	shouldBe["earnings"] = append(shouldBe["earnings"],
-		moneyExchange{4321.0, date, "Company"})
+		moneyExchange{4321.0, date, "Company", ""})
 
 	date, err = time.Parse("2006-01-02", "2020-12-01")
 	if err != nil {
@@ -43,7 +43,7 @@ func TestReadMonthlyFile(t *testing.T) {
 		t.Fatal(err)
 	}
 	shouldBe["spendings"] = append(shouldBe["spendings"],
-		moneyExchange{1234.0, date, "Rent"})
+		moneyExchange{1234.0, date, "rent", ""})
 
 	date, err = time.Parse("2006-01-02", "2020-12-25")
 	if err != nil {
@@ -51,7 +51,7 @@ func TestReadMonthlyFile(t *testing.T) {
 		t.Fatal(err)
 	}
 	shouldBe["spendings"] = append(shouldBe["spendings"],
-		moneyExchange{42.24, date, "cat food shop"})
+		moneyExchange{42.24, date, "cat food shop", ""})
 
 	if !reflect.DeepEqual(entries, shouldBe) {
 		t.Errorf("readCategoriesFile() failed: got %v, wanted %v",
