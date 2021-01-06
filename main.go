@@ -130,8 +130,10 @@ func acceptDate(dateCli dateFilter, dateEntry time.Time) bool {
 	return false // should be unreachable tho
 }
 
-func printSummary(date dateFilter, entries map[string][]moneyExchange) {
+func calcSummary(date dateFilter, entries map[string][]moneyExchange) (float64,
+	float64, float64) {
 	var spendingSum float64
+
 	for _, entry := range entries["spendings"] {
 		if acceptDate(date, entry.Date) {
 			spendingSum = spendingSum + entry.Amount
@@ -145,6 +147,11 @@ func printSummary(date dateFilter, entries map[string][]moneyExchange) {
 	}
 	delta := earningSum - spendingSum
 
+	return earningSum, spendingSum, delta
+
+}
+
+func printSummary(earningSum, spendingSum, delta float64) {
 	fmt.Printf("You earnt $%.2f\n", earningSum)
 	fmt.Printf("You spent $%.2f\n", spendingSum)
 	if delta > 0 {
@@ -211,7 +218,7 @@ func main() {
 
 	switch mode {
 	case "summary":
-		printSummary(date, e)
+		printSummary(calcSummary(date, e))
 	case "earnings":
 		printEarnings()
 	case "spendings":

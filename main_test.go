@@ -95,3 +95,19 @@ func TestParseArgDate(t *testing.T) {
 	}
 
 }
+
+func TestCalcSummary(t *testing.T) {
+	shouldBeEarning := 4321.00
+	shouldBeSpending := 1276.24
+	shouldBeDelta := 3044.76
+	date := dateFilter{time.Now(), "null"}
+	entries, _ := readMonthlyFile("testdata/december-20.yml")
+	e, s, d := calcSummary(date, entries)
+	if e != shouldBeEarning && s != shouldBeSpending && d != shouldBeDelta {
+		t.Error("calcSummary() result is unexpected:")
+		t.Errorf("got %v, wanted %v", e, shouldBeEarning)
+		t.Errorf("got %v, wanted %v", s, shouldBeSpending)
+		t.Fatalf("got %v, wanted %v", d, shouldBeDelta)
+	}
+
+}
