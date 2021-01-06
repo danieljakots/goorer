@@ -130,36 +130,24 @@ func acceptDate(dateCli dateFilter, dateEntry time.Time) bool {
 	return false // should be unreachable tho
 }
 
-func calcEarnings(date dateFilter, entries map[string][]moneyExchange) (float64) {
+func calcSummary(date dateFilter, entries map[string][]moneyExchange) (float64,
+	float64, float64) {
+	var spendingSum float64
+
+	for _, entry := range entries["spendings"] {
+		if acceptDate(date, entry.Date) {
+			spendingSum = spendingSum + entry.Amount
+		}
+	}
 	var earningSum float64
 	for _, entry := range entries["earnings"] {
 		if acceptDate(date, entry.Date) {
 			earningSum = earningSum + entry.Amount
 		}
 	}
-	return earningSum
-}
+	delta := earningSum - spendingSum
 
-func calcSpendings(date dateFilter, entries map[string][]moneyExchange) (float64) {
-	var spendingSum float64
-	for _, entry := range entries["spendings"] {
-		if acceptDate(date, entry.Date) {
-			spendingSum = spendingSum + entry.Amount
-		}
-	}
-	return spendingSum
-}
-
-func calcDelta(earningSum, spendingSum float64) (float64) {
-	return earningSum - spendingSum
-}
-
-func calcAll(date dateFilter, entries map[string][]moneyExchange) (float64,
-	float64, float64) {
-	s := calcSpendings(date, entries)
-	e := calcEarnings(date, entries)
-	d := calcDelta(e, s)
-	return e, s, d
+	return earningSum, spendingSum, delta
 
 }
 
@@ -230,7 +218,7 @@ func main() {
 
 	switch mode {
 	case "summary":
-		printSummary(calcAll(date, e))
+		printSummary(calcSummary(date, e))
 	case "earnings":
 		printEarnings()
 	case "spendings":
