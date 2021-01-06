@@ -67,12 +67,12 @@ func TestParseArgDate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	result, err := parseArgDate(year)
+	result, err := parseCliDate(year)
 	if err != nil {
 		t.Error("parseArgDate(year) gave an error")
 		t.Fatal(err)
 	}
-	if shouldBeYear != result {
+	if shouldBeYear != result.date {
 		t.Errorf("parseArgDate(year) result is unexpected: got %v, wanted %v",
 			result, shouldBeYear)
 	}
@@ -84,12 +84,12 @@ func TestParseArgDate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	result, err = parseArgDate(yearMonth)
+	result, err = parseCliDate(yearMonth)
 	if err != nil {
 		t.Error("parseArgDate(yearMonth) gave an error")
 		t.Fatal(err)
 	}
-	if shouldBeYearMonth != result {
+	if shouldBeYearMonth != result.date {
 		t.Error("parseArgDate(yearMonth) result is unexpected:")
 		t.Errorf("got %v, wanted %v", result, shouldBeYearMonth)
 	}

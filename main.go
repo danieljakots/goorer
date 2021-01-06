@@ -14,6 +14,11 @@ import (
 
 const dataPath = "testdata/"
 
+type dateFilter struct {
+	date      time.Time
+	precision string
+}
+
 type moneyExchange struct {
 	Amount   float64
 	Date     time.Time
@@ -49,14 +54,24 @@ func readMonthlyFile(monthlyFilePath string) (map[string][]moneyExchange, error)
 
 }
 
-func parseArgDate(date string) (time.Time, error) {
-	var timeFormat string
-	if len(date) == 4 {
+func parseCliDate(dateCli string) (dateFilter, error) {
+	var timeFormat, precision string
+	if len(dateCli) == 4 {
 		timeFormat = "2006"
-	} else if len(date) == 7 {
+		precision = "year"
+	} else if len(dateCli) == 7 {
 		timeFormat = "2006-01"
+		precision = "month"
+	} else if len(dateCli) == 0 {
+		precision = "null"
 	}
-	return time.Parse(timeFormat, date)
+
+	date, err := time.Parse(timeFormat, dateCli)
+	if err != nil {
+		return dateFilter{}, err
+	}
+
+	return dateFilter{date, precision}, nil
 }
 
 func printHelp() {
@@ -65,7 +80,7 @@ func printHelp() {
 	os.Exit(1)
 }
 
-func cli() (string, time.Time, error) {
+func cli() (string, dateFilter, error) {
 	summary := flag.NewFlagSet("summary", flag.ExitOnError)
 	dateSummary := summary.String("date", "",
 		"Focus on entries at given date (YYYY[-MM] format")
@@ -79,21 +94,21 @@ func cli() (string, time.Time, error) {
 	if len(os.Args) < 2 {
 		err := errors.New("You need to pick a sucommand. " +
 			"Available subcommands are summary, earnings, and spendings")
-		return "", time.Now(), err
+		return "", dateFilter{}, err
 	}
 
-	var date time.Time
+	var date dateFilter
 	var err error
 	switch os.Args[1] {
 	case "summary":
 		summary.Parse(os.Args[2:])
-		date, err = parseArgDate(*dateSummary)
+		date, err = parseCliDate(*dateSummary)
 	case "earnings":
 		earnings.Parse(os.Args[2:])
-		date, err = parseArgDate(*dateEarnings)
+		date, err = parseCliDate(*dateEarnings)
 	case "spendings":
 		spendings.Parse(os.Args[2:])
-		date, err = parseArgDate(*dateSpendings)
+		date, err = parseCliDate(*dateSpendings)
 	case "-h", "-help", "--help":
 		printHelp()
 	default:
@@ -103,14 +118,30 @@ func cli() (string, time.Time, error) {
 	return os.Args[1], date, err
 }
 
-func printSummary(date time.Time, entries map[string][]moneyExchange) {
+func acceptDate(dateCli dateFilter, dateEntry time.Time) bool {
+	if dateCli.precision == "year" {
+		return dateCli.date.Year() == dateEntry.Year()
+	} else if dateCli.precision == "month" {
+		return dateCli.date.Year() == dateEntry.Year() &&
+			dateCli.date.Month() == dateEntry.Month()
+	} else if dateCli.precision == "null" {
+		return true
+	}
+	return false // should be unreachable tho
+}
+
+func printSummary(date dateFilter, entries map[string][]moneyExchange) {
 	var spendingSum float64
 	for _, entry := range entries["spendings"] {
-		spendingSum = spendingSum + entry.Amount
+		if acceptDate(date, entry.Date) {
+			spendingSum = spendingSum + entry.Amount
+		}
 	}
 	var earningSum float64
 	for _, entry := range entries["earnings"] {
-		earningSum = earningSum + entry.Amount
+		if acceptDate(date, entry.Date) {
+			earningSum = earningSum + entry.Amount
+		}
 	}
 	delta := earningSum - spendingSum
 
