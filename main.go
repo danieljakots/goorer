@@ -166,8 +166,23 @@ func printSummary(earningSum, spendingSum, delta float64) {
 
 }
 
-func printEarnings() {
-	fmt.Println("earnings")
+func calcEarnings(date dateFilter, e map[string][]moneyExchange) map[string]float64 {
+	earnings := make(map[string]float64)
+	for _, entry := range e["earnings"] {
+		if acceptDate(date, entry.Date) {
+			earnings[entry.With] += entry.Amount
+		}
+	}
+	return earnings
+}
+
+func printEarnings(earnings map[string]float64) {
+	if len(earnings) == 0 {
+		fmt.Println("No money was earnt for that period")
+	}
+	for source, amount := range earnings {
+		fmt.Printf("From %v: we earnt $%.2f\n", source, amount)
+	}
 }
 
 func printSpendings() {
@@ -220,7 +235,7 @@ func main() {
 	case "summary":
 		printSummary(calcSummary(date, e))
 	case "earnings":
-		printEarnings()
+		printEarnings(calcEarnings(date, e))
 	case "spendings":
 		printSpendings()
 	default:

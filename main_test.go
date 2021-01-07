@@ -111,3 +111,16 @@ func TestCalcSummary(t *testing.T) {
 	}
 
 }
+
+func TestCalcEarnings(t *testing.T) {
+	shouldBeEarnings := make(map[string]float64)
+	shouldBeEarnings["Company"] = 4321
+	date := dateFilter{time.Now(), "null"}
+	entries, _ := readMonthlyFile("testdata/december-20.yml")
+	earnings := calcEarnings(date, entries)
+	if !reflect.DeepEqual(earnings, shouldBeEarnings) {
+		t.Error("calcEarnings() result is unexpected:")
+		t.Errorf("got %v, wanted %v", earnings, shouldBeEarnings)
+	}
+
+}
