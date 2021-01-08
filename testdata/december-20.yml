@@ -2,6 +2,9 @@ earnings:
 - date: 2020-12-25
   amount: 4321
   with: Company
+- date: 2020-12-25
+  amount: 5
+  with: Santa Claus
 
 spendings:
 - date: 2020-12-01

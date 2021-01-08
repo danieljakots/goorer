@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"sort"
 	"time"
 
 	"gopkg.in/yaml.v2"
@@ -166,17 +167,33 @@ func printSummary(earningSum, spendingSum, delta float64) {
 
 }
 
-func calcEarnings(date dateFilter, e map[string][]moneyExchange) map[string]float64 {
+func calcEarnings(date dateFilter, e map[string][]moneyExchange) (map[string]float64,
+	[]float64){
 	earnings := make(map[string]float64)
+	reverseEarnings := make(map[float64]string)
 	for _, entry := range e["earnings"] {
 		if acceptDate(date, entry.Date) {
 			earnings[entry.With] += entry.Amount
 		}
 	}
-	return earnings
+	order := make([]float64, len(earnings))
+	// Hopes And Prayers that there won't be conflict(s)
+	i := 0
+	for source, amount := range earnings {
+		reverseEarnings[amount] = source
+		order[i] = amount
+		i++
+	}
+	if len(earnings) != len(reverseEarnings) {
+		log.Fatal("The sums of entries from two differents source are the " +
+			"same, and somehow, that's a problem.")
+	}
+	sort.Sort(sort.Reverse(sort.Float64Slice(order)))
+
+	return earnings, order
 }
 
-func printEarnings(earnings map[string]float64) {
+func printEarnings(earnings map[string]float64, order []float64) {
 	if len(earnings) == 0 {
 		fmt.Println("No money was earnt for that period")
 	}
