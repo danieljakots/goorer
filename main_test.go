@@ -25,13 +25,13 @@ func TestReadCategoriesFile(t *testing.T) {
 func TestReadMonthlyFile(t *testing.T) {
 	entries, err := readMonthlyFile("testdata/december-20.yml")
 	if err != nil {
-		t.Error("readCategoriesFile() failed")
+		t.Error("readMonthlyFile() failed")
 		t.Fatal(err)
 	}
 	shouldBe := make(map[string][]moneyExchange, 3)
 	date, err := time.Parse("2006-01-02", "2020-12-25")
 	if err != nil {
-		t.Error("time.Parse in readCategoriesFile() failed")
+		t.Error("time.Parse in readMonthlyFile() failed")
 		t.Fatal(err)
 	}
 	shouldBe["earnings"] = append(shouldBe["earnings"],
@@ -41,7 +41,7 @@ func TestReadMonthlyFile(t *testing.T) {
 
 	date, err = time.Parse("2006-01-02", "2020-12-01")
 	if err != nil {
-		t.Error("time.Parse in readCategoriesFile() failed")
+		t.Error("time.Parse in readMonthlyFile() failed")
 		t.Fatal(err)
 	}
 	shouldBe["spendings"] = append(shouldBe["spendings"],
@@ -49,14 +49,14 @@ func TestReadMonthlyFile(t *testing.T) {
 
 	date, err = time.Parse("2006-01-02", "2020-12-25")
 	if err != nil {
-		t.Error("time.Parse in readCategoriesFile() failed")
+		t.Error("time.Parse in readMonthlyFile() failed")
 		t.Fatal(err)
 	}
 	shouldBe["spendings"] = append(shouldBe["spendings"],
 		moneyExchange{42.24, date, "cat food shop", ""})
 
 	if !reflect.DeepEqual(entries, shouldBe) {
-		t.Errorf("readCategoriesFile() failed: got %v, wanted %v",
+		t.Errorf("readMonthlyFile() failed: got %v, wanted %v",
 			entries, shouldBe)
 	}
 }
