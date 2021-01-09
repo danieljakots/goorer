@@ -130,9 +130,9 @@ func TestCalcSummary(t *testing.T) {
 }
 
 func TestCalcEarnings(t *testing.T) {
-	shouldBeEarnings := make(map[string]float64)
-	shouldBeEarnings["Company"] = 4321
-	shouldBeEarnings["Santa Claus"] = 5
+	shouldBeEarnings := make([]kv, 0)
+	shouldBeEarnings = append(shouldBeEarnings, kv{"Company", 4321})
+	shouldBeEarnings = append(shouldBeEarnings, kv{"Santa Claus", 5})
 
 	date := dateFilter{time.Now(), "null"}
 	entries, _ := readMonthlyFile("testdata/december-20.yml")
@@ -156,10 +156,10 @@ func TestCalcSpendings(t *testing.T) {
 	}
 
 	// without details
-	shouldBeSpendings := make(map[string]float64)
-	shouldBeSpendings["home"] = 1234
-	shouldBeSpendings["cat"] = 55.61
-	shouldBeSpendings["wine"] = 73.31
+	shouldBeSpendings := make([]kv, 0)
+	shouldBeSpendings = append(shouldBeSpendings, kv{"home", 1234})
+	shouldBeSpendings = append(shouldBeSpendings, kv{"wine", 73.31})
+	shouldBeSpendings = append(shouldBeSpendings, kv{"cat", 55.61})
 	spendings := calcSpendings(date, e, false)
 	if !reflect.DeepEqual(spendings, shouldBeSpendings) {
 		t.Error("calcSpendings() no details spendings result is unexpected:")
@@ -167,10 +167,10 @@ func TestCalcSpendings(t *testing.T) {
 	}
 
 	// with details
-	shouldBeSpendings = make(map[string]float64)
-	shouldBeSpendings["rent"] = 1234
-	shouldBeSpendings["cat food shop"] = 55.61
-	shouldBeSpendings["saq"] = 73.31
+	shouldBeSpendings = make([]kv, 0)
+	shouldBeSpendings = append(shouldBeSpendings, kv{"rent", 1234})
+	shouldBeSpendings = append(shouldBeSpendings, kv{"saq", 73.31})
+	shouldBeSpendings = append(shouldBeSpendings, kv{"cat food shop", 55.61})
 
 	spendings = calcSpendings(date, e, true)
 	if !reflect.DeepEqual(spendings, shouldBeSpendings) {

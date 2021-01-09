@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"sort"
 	"time"
 
 	"gopkg.in/yaml.v2"
@@ -23,6 +24,23 @@ type moneyExchange struct {
 	Date     time.Time
 	With     string
 	Category string
+}
+
+type kvlist []kv
+
+type kv struct {
+	key   string
+	value float64
+}
+
+func (kvl kvlist) Len() int {
+	return len(kvl)
+}
+func (kvl kvlist) Swap(i, j int) {
+	kvl[i], kvl[j] = kvl[j], kvl[i]
+}
+func (kvl kvlist) Less(i, j int) bool {
+	return kvl[i].value < kvl[j].value
 }
 
 func readCategoriesFile(categoriesFilePath string) (map[string]string, error) {
@@ -197,46 +215,72 @@ func printSummary(earningSum, spendingSum, delta float64) {
 
 }
 
-func calcEarnings(date dateFilter, e map[string][]moneyExchange) map[string]float64 {
-	earnings := make(map[string]float64)
-	earnings2 := make([]kvstruct)
+func calcEarnings(date dateFilter, e map[string][]moneyExchange) []kv {
+	earnings := make([]kv, 0)
 	for _, entry := range e["earnings"] {
 		if !acceptDate(date, entry.Date) {
 			continue
 		}
-		earnings[entry.With] += entry.Amount
+
+		for n := range earnings {
+			if earnings[n].key != entry.With {
+				continue
+			}
+			earnings[n].value += entry.Amount
+			continue
+		}
+		earnings = append(earnings, kv{entry.With, entry.Amount})
 	}
+	sort.Sort(sort.Reverse(kvlist(earnings)))
 	return earnings
 }
 
-func printEarnings(earnings map[string]float64) {
+func printEarnings(earnings []kv) {
 	if len(earnings) == 0 {
 		fmt.Println("No money was earnt for that period")
 	}
-	for source, amount := range earnings {
-		fmt.Printf("From %v: we earnt $%.2f\n", source, amount)
+	for n := range earnings {
+		fmt.Printf("From %v: we earnt $%.2f\n", earnings[n].key,
+			earnings[n].value)
 	}
 }
 
-func calcSpendings(date dateFilter, e map[string][]moneyExchange, details bool) map[string]float64 {
+func calcSpendings(date dateFilter, e map[string][]moneyExchange, details bool) []kv {
 
-	spendings := make(map[string]float64)
+	spendings := make([]kv, 0)
+OUTER:
 	for _, entry := range e["spendings"] {
 		if !acceptDate(date, entry.Date) {
 			continue
 		}
 		if details {
-			spendings[entry.With] += entry.Amount
+			for n := range spendings {
+				if spendings[n].key != entry.With {
+					continue
+				}
+				spendings[n].value += entry.Amount
+				continue OUTER
+			}
+			spendings = append(spendings, kv{entry.With, entry.Amount})
 		} else {
-			spendings[entry.Category] += entry.Amount
+			for n := range spendings {
+				if spendings[n].key != entry.Category {
+					continue
+				}
+				spendings[n].value += entry.Amount
+				continue OUTER
+			}
+			spendings = append(spendings, kv{entry.Category, entry.Amount})
 		}
 	}
+	sort.Sort(sort.Reverse(kvlist(spendings)))
 	return spendings
 }
 
-func printSpendings(spendings map[string]float64) {
-	for source, amount := range spendings {
-		fmt.Printf("For %v: we spent $%.2f\n", source, amount)
+func printSpendings(spendings []kv) {
+	for n := range spendings {
+		fmt.Printf("For %v: we spent $%.2f\n", spendings[n].key,
+			spendings[n].value)
 	}
 }
 
