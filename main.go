@@ -75,8 +75,9 @@ func parseCliDate(dateCli string) (dateFilter, error) {
 
 func printHelp() {
 	fmt.Println("usage:", os.Args[0], "[-h] {summary, earnings, spendings} "+
-		"path/to/data")
-	fmt.Println("      ", os.Args[0], "each subcommand accepts a -date YYYY[-MM]")
+		"path/to/data\n")
+	fmt.Println("Each subcommand accepts a --date YYYY[-MM] to filter on a " +
+		"subset of entries")
 	os.Exit(1)
 }
 
