@@ -240,6 +240,7 @@ func printSummary(earningSum, spendingSum, delta float64) {
 
 func calcEarnings(date dateFilter, e map[string][]moneyExchange) []kv {
 	earnings := make([]kv, 0)
+OUTER:
 	for _, entry := range e["earnings"] {
 		if !acceptDate(date, entry.Date) {
 			continue
@@ -250,7 +251,7 @@ func calcEarnings(date dateFilter, e map[string][]moneyExchange) []kv {
 				continue
 			}
 			earnings[n].value += entry.Amount
-			continue
+			continue OUTER
 		}
 		earnings = append(earnings, kv{entry.With, entry.Amount})
 	}

@@ -172,11 +172,16 @@ func TestCalcSummary(t *testing.T) {
 
 func TestCalcEarnings(t *testing.T) {
 	shouldBeEarnings := make([]kv, 0)
-	shouldBeEarnings = append(shouldBeEarnings, kv{"Company", 4321})
+	shouldBeEarnings = append(shouldBeEarnings, kv{"Company", 5443})
 	shouldBeEarnings = append(shouldBeEarnings, kv{"Santa Claus", 5})
 
+	files, err := ioutil.ReadDir("testdata")
+	if err != nil {
+		t.Fatal("ReadDir failed in TestCalcEarnings", err)
+	}
+	entries, err := readAllMonthlyFiles(files, "testdata")
 	date := dateFilter{time.Now(), "null"}
-	entries, _ := readMonthlyFile("testdata/december-20.yml")
+
 	earnings := calcEarnings(date, entries)
 	if !reflect.DeepEqual(earnings, shouldBeEarnings) {
 		t.Error("calcEarnings() earnings result is unexpected:")
