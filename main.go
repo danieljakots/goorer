@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"sort"
+	"strings"
 	"time"
 
 	"gopkg.in/yaml.v2"
@@ -77,6 +78,9 @@ func readAllMonthlyFiles(files []os.FileInfo, dataPath string) (
 	e := make(map[string][]moneyExchange)
 	for _, file := range files {
 		if file.Name() == "categories.yml" {
+			continue
+		}
+		if !strings.HasSuffix(file.Name(), "yml") {
 			continue
 		}
 		fileEntries, err := readMonthlyFile(path.Join(dataPath, file.Name()))
