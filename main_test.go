@@ -95,7 +95,6 @@ func TestParseArgDate(t *testing.T) {
 		t.Error("parseArgDate(yearMonth) result is unexpected:")
 		t.Errorf("got %v, wanted %v", result, shouldBeYearMonth)
 	}
-
 }
 
 func TestCalcSummary(t *testing.T) {
@@ -111,7 +110,6 @@ func TestCalcSummary(t *testing.T) {
 		t.Errorf("got %v, wanted %v", s, shouldBeSpending)
 		t.Fatalf("got %v, wanted %v", d, shouldBeDelta)
 	}
-
 }
 
 func TestCalcEarnings(t *testing.T) {
@@ -131,7 +129,6 @@ func TestCalcEarnings(t *testing.T) {
 		t.Error("calcEarnings() order result is unexpected:")
 		t.Errorf("got %v, wanted %v", order, shouldBeOrder)
 	}
-
 }
 
 func TestCalcSpendings(t *testing.T) {
@@ -159,5 +156,4 @@ func TestCalcSpendings(t *testing.T) {
 		t.Error("calcSpendings() order result is unexpected:")
 		t.Errorf("got %v, wanted %v", order, shouldBeOrder)
 	}
-
 }
