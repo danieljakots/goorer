@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"path"
 	"os"
+	"path"
 	"time"
 
 	"gopkg.in/yaml.v2"
@@ -197,8 +197,9 @@ func printSummary(earningSum, spendingSum, delta float64) {
 
 }
 
-func calcEarnings(date dateFilter, e map[string][]moneyExchange) (map[string]float64) {
+func calcEarnings(date dateFilter, e map[string][]moneyExchange) map[string]float64 {
 	earnings := make(map[string]float64)
+	earnings2 := make([]kvstruct)
 	for _, entry := range e["earnings"] {
 		if !acceptDate(date, entry.Date) {
 			continue
@@ -217,8 +218,7 @@ func printEarnings(earnings map[string]float64) {
 	}
 }
 
-func calcSpendings(date dateFilter, e map[string][]moneyExchange, details bool) (
-	map[string]float64) {
+func calcSpendings(date dateFilter, e map[string][]moneyExchange, details bool) map[string]float64 {
 
 	spendings := make(map[string]float64)
 	for _, entry := range e["spendings"] {
