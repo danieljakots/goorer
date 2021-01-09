@@ -341,7 +341,12 @@ func main() {
 	// Populate the Category field for each spendings entry
 	if mode != "summary" {
 		for n := range e["spendings"] {
-			e["spendings"][n].Category = categories[e["spendings"][n].With]
+			if cat, ok := categories[e["spendings"][n].With]; ok {
+				e["spendings"][n].Category = cat
+				continue
+			}
+			log.Fatal("Couldn't find category for ",
+				e["spendings"][n].With)
 		}
 	}
 
