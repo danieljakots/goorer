@@ -15,6 +15,7 @@ func TestReadCategoriesFile(t *testing.T) {
 	shouldBe := make(map[string]string, 2)
 	shouldBe["cat food shop"] = "cat"
 	shouldBe["rent"] = "home"
+	shouldBe["saq"] = "wine"
 
 	if !reflect.DeepEqual(categories, shouldBe) {
 		t.Errorf("readCategoriesFile() failed: got %v, wanted %v",
@@ -46,6 +47,22 @@ func TestReadMonthlyFile(t *testing.T) {
 	}
 	shouldBe["spendings"] = append(shouldBe["spendings"],
 		moneyExchange{1234.0, date, "rent", ""})
+
+	date, err = time.Parse("2006-01-02", "2020-12-12")
+	if err != nil {
+		t.Error("time.Parse in readMonthlyFile() failed")
+		t.Fatal(err)
+	}
+	shouldBe["spendings"] = append(shouldBe["spendings"],
+		moneyExchange{13.37, date, "cat food shop", ""})
+
+	date, err = time.Parse("2006-01-02", "2020-12-21")
+	if err != nil {
+		t.Error("time.Parse in readMonthlyFile() failed")
+		t.Fatal(err)
+	}
+	shouldBe["spendings"] = append(shouldBe["spendings"],
+		moneyExchange{73.31, date, "saq", ""})
 
 	date, err = time.Parse("2006-01-02", "2020-12-25")
 	if err != nil {
@@ -99,8 +116,8 @@ func TestParseArgDate(t *testing.T) {
 
 func TestCalcSummary(t *testing.T) {
 	shouldBeEarning := 4321.00
-	shouldBeSpending := 1276.24
-	shouldBeDelta := 3044.76
+	shouldBeSpending := 1362.9
+	shouldBeDelta := 2963.08
 	date := dateFilter{time.Now(), "null"}
 	entries, _ := readMonthlyFile("testdata/december-20.yml")
 	e, s, d := calcSummary(date, entries)
@@ -146,8 +163,9 @@ func TestCalcSpendings(t *testing.T) {
 	// without details
 	shouldBeSpendings := make(map[string]float64)
 	shouldBeSpendings["home"] = 1234
-	shouldBeSpendings["cat"] = 42.24
-	shouldBeOrder := []float64{1234.0, 42.24}
+	shouldBeSpendings["cat"] = 55.61
+	shouldBeSpendings["wine"] = 73.31
+	shouldBeOrder := []float64{1234.0, 73.31, 55.61}
 	spendings, order := calcSpendings(date, e, false)
 	if !reflect.DeepEqual(spendings, shouldBeSpendings) {
 		t.Error("calcSpendings() no details spendings result is unexpected:")
@@ -161,8 +179,9 @@ func TestCalcSpendings(t *testing.T) {
 	// with details
 	shouldBeSpendings = make(map[string]float64)
 	shouldBeSpendings["rent"] = 1234
-	shouldBeSpendings["cat food shop"] = 42.24
-	shouldBeOrder = []float64{1234.0, 42.24}
+	shouldBeSpendings["cat food shop"] = 55.61
+	shouldBeSpendings["saq"] = 73.31
+	shouldBeOrder = []float64{1234.0, 73.31, 55.61}
 
 	spendings, order = calcSpendings(date, e, true)
 	if !reflect.DeepEqual(spendings, shouldBeSpendings) {
