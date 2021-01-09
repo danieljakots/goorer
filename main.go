@@ -306,7 +306,6 @@ func main() {
 		if file.Name() == "categories.yml" {
 			continue
 		}
-		// XXX use FS proper join
 		fileEntries, err := readMonthlyFile(path.Join(dataPath, file.Name()))
 		if err != nil {
 			log.Fatal("Couldn't parse records file: ", err)
