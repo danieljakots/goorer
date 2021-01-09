@@ -56,7 +56,7 @@ func TestReadMonthlyFile(t *testing.T) {
 		moneyExchange{42.24, date, "cat food shop", ""})
 
 	if !reflect.DeepEqual(entries, shouldBe) {
-		t.Errorf("readMonthlyFile() failed: got %v, wanted %v",
+		t.Errorf("readMonthlyFile() failed: got\n%v\nwanted\n%v",
 			entries, shouldBe)
 	}
 }
