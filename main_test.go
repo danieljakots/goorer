@@ -133,18 +133,13 @@ func TestCalcEarnings(t *testing.T) {
 	shouldBeEarnings := make(map[string]float64)
 	shouldBeEarnings["Company"] = 4321
 	shouldBeEarnings["Santa Claus"] = 5
-	shouldBeOrder := []float64{4321.0, 5.0}
 
 	date := dateFilter{time.Now(), "null"}
 	entries, _ := readMonthlyFile("testdata/december-20.yml")
-	earnings, order := calcEarnings(date, entries)
+	earnings := calcEarnings(date, entries)
 	if !reflect.DeepEqual(earnings, shouldBeEarnings) {
 		t.Error("calcEarnings() earnings result is unexpected:")
 		t.Errorf("got %v, wanted %v", earnings, shouldBeEarnings)
-	}
-	if !reflect.DeepEqual(order, shouldBeOrder) {
-		t.Error("calcEarnings() order result is unexpected:")
-		t.Errorf("got %v, wanted %v", order, shouldBeOrder)
 	}
 }
 
@@ -165,15 +160,10 @@ func TestCalcSpendings(t *testing.T) {
 	shouldBeSpendings["home"] = 1234
 	shouldBeSpendings["cat"] = 55.61
 	shouldBeSpendings["wine"] = 73.31
-	shouldBeOrder := []float64{1234.0, 73.31, 55.61}
-	spendings, order := calcSpendings(date, e, false)
+	spendings := calcSpendings(date, e, false)
 	if !reflect.DeepEqual(spendings, shouldBeSpendings) {
 		t.Error("calcSpendings() no details spendings result is unexpected:")
 		t.Errorf("got %v, wanted %v", spendings, shouldBeSpendings)
-	}
-	if !reflect.DeepEqual(order, shouldBeOrder) {
-		t.Error("calcSpendings() no details order result is unexpected:")
-		t.Errorf("got %v, wanted %v", order, shouldBeOrder)
 	}
 
 	// with details
@@ -181,15 +171,10 @@ func TestCalcSpendings(t *testing.T) {
 	shouldBeSpendings["rent"] = 1234
 	shouldBeSpendings["cat food shop"] = 55.61
 	shouldBeSpendings["saq"] = 73.31
-	shouldBeOrder = []float64{1234.0, 73.31, 55.61}
 
-	spendings, order = calcSpendings(date, e, true)
+	spendings = calcSpendings(date, e, true)
 	if !reflect.DeepEqual(spendings, shouldBeSpendings) {
 		t.Error("calcSpendings() w/ details spendings result is unexpected:")
 		t.Errorf("got %v, wanted %v", spendings, shouldBeSpendings)
-	}
-	if !reflect.DeepEqual(order, shouldBeOrder) {
-		t.Error("calcSpendings() w/ details order result is unexpected:")
-		t.Errorf("got %v, wanted %v", order, shouldBeOrder)
 	}
 }

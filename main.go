@@ -8,7 +8,6 @@ import (
 	"log"
 	"path"
 	"os"
-	"sort"
 	"time"
 
 	"gopkg.in/yaml.v2"
@@ -197,33 +196,17 @@ func printSummary(earningSum, spendingSum, delta float64) {
 
 }
 
-func calcEarnings(date dateFilter, e map[string][]moneyExchange) (map[string]float64,
-	[]float64) {
+func calcEarnings(date dateFilter, e map[string][]moneyExchange) (map[string]float64) {
 	earnings := make(map[string]float64)
-	reverseEarnings := make(map[float64]string)
 	for _, entry := range e["earnings"] {
 		if acceptDate(date, entry.Date) {
 			earnings[entry.With] += entry.Amount
 		}
 	}
-	order := make([]float64, len(earnings))
-	// Hopes And Prayers that there won't be conflict(s)
-	i := 0
-	for source, amount := range earnings {
-		reverseEarnings[amount] = source
-		order[i] = amount
-		i++
-	}
-	if len(earnings) != len(reverseEarnings) {
-		log.Fatal("The sums of entries from two differents source are the " +
-			"same, and somehow, that's a problem.")
-	}
-	sort.Sort(sort.Reverse(sort.Float64Slice(order)))
-
-	return earnings, order
+	return earnings
 }
 
-func printEarnings(earnings map[string]float64, order []float64) {
+func printEarnings(earnings map[string]float64) {
 	if len(earnings) == 0 {
 		fmt.Println("No money was earnt for that period")
 	}
@@ -233,10 +216,9 @@ func printEarnings(earnings map[string]float64, order []float64) {
 }
 
 func calcSpendings(date dateFilter, e map[string][]moneyExchange, details bool) (
-	map[string]float64, []float64) {
+	map[string]float64) {
 
 	spendings := make(map[string]float64)
-	reverseSpendings := make(map[float64]string)
 	for _, entry := range e["spendings"] {
 		if !acceptDate(date, entry.Date) {
 			continue
@@ -247,24 +229,10 @@ func calcSpendings(date dateFilter, e map[string][]moneyExchange, details bool) 
 			spendings[entry.Category] += entry.Amount
 		}
 	}
-	order := make([]float64, len(spendings))
-	// Hopes And Prayers that there won't be conflict(s)
-	i := 0
-	for source, amount := range spendings {
-		reverseSpendings[amount] = source
-		order[i] = amount
-		i++
-	}
-	if len(spendings) != len(reverseSpendings) {
-		log.Fatal("The sums of entries from two differents source are the " +
-			"same, and somehow, that's a problem.")
-	}
-	sort.Sort(sort.Reverse(sort.Float64Slice(order)))
-
-	return spendings, order
+	return spendings
 }
 
-func printSpendings(spendings map[string]float64, order []float64) {
+func printSpendings(spendings map[string]float64) {
 	for source, amount := range spendings {
 		fmt.Printf("For %v: we spent $%.2f\n", source, amount)
 	}
