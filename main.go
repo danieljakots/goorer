@@ -74,7 +74,7 @@ func parseCliDate(dateCli string) (dateFilter, error) {
 }
 
 func printHelp() {
-	fmt.Println("usage:", os.Args[0], "[-h] {summary, earnings, spendings} " +
+	fmt.Println("usage:", os.Args[0], "[-h] {summary, earnings, spendings} "+
 		"path/to/data")
 	fmt.Println("      ", os.Args[0], "each subcommand accepts a -date YYYY[-MM]")
 	os.Exit(1)
@@ -183,7 +183,7 @@ func printSummary(earningSum, spendingSum, delta float64) {
 }
 
 func calcEarnings(date dateFilter, e map[string][]moneyExchange) (map[string]float64,
-	[]float64){
+	[]float64) {
 	earnings := make(map[string]float64)
 	reverseEarnings := make(map[float64]string)
 	for _, entry := range e["earnings"] {
@@ -218,7 +218,7 @@ func printEarnings(earnings map[string]float64, order []float64) {
 }
 
 func calcSpendings(date dateFilter, e map[string][]moneyExchange) (map[string]float64,
-	[]float64){
+	[]float64) {
 	spendings := make(map[string]float64)
 	reverseSpendings := make(map[float64]string)
 	for _, entry := range e["spendings"] {
@@ -297,7 +297,7 @@ func main() {
 	case "earnings":
 		printEarnings(calcEarnings(date, e))
 	case "spendings":
-		printSpendings(calcSpendings(date,e))
+		printSpendings(calcSpendings(date, e))
 	default:
 		log.Fatal("How did you end up here pal?")
 	}
