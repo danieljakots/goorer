@@ -71,6 +71,29 @@ func readMonthlyFile(monthlyFilePath string) (map[string][]moneyExchange, error)
 
 }
 
+func readAllMonthlyFiles(files []os.FileInfo, dataPath string) (
+	map[string][]moneyExchange, error) {
+	e := make(map[string][]moneyExchange)
+	for _, file := range files {
+		if file.Name() == "categories.yml" {
+			continue
+		}
+		fileEntries, err := readMonthlyFile(path.Join(dataPath, file.Name()))
+		if err != nil {
+			crafterErr := fmt.Sprintf("Couldn't parse records file %v: %v",
+				file.Name(), err)
+			return nil, errors.New(crafterErr)
+		}
+		for _, spending := range fileEntries["spendings"] {
+			e["spendings"] = append(e["spendings"], spending)
+		}
+		for _, earning := range fileEntries["earnings"] {
+			e["earnings"] = append(e["earnings"], earning)
+		}
+	}
+	return e, nil
+}
+
 func parseCliDate(dateCli string) (dateFilter, error) {
 	var timeFormat, precision string
 	if len(dateCli) == 4 {
@@ -301,22 +324,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	e := make(map[string][]moneyExchange)
-	for _, file := range files {
-		if file.Name() == "categories.yml" {
-			continue
-		}
-		fileEntries, err := readMonthlyFile(path.Join(dataPath, file.Name()))
-		if err != nil {
-			log.Fatalf("Couldn't parse records file %v: %v",
-				file.Name(), err)
-		}
-		for _, spending := range fileEntries["spendings"] {
-			e["spendings"] = append(e["spendings"], spending)
-		}
-		for _, earning := range fileEntries["earnings"] {
-			e["earnings"] = append(e["earnings"], earning)
-		}
+	e, err := readAllMonthlyFiles(files, dataPath)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// Populate the Category field for each spendings entry

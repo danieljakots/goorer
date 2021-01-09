@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"reflect"
 	"testing"
 	"time"
@@ -71,6 +72,46 @@ func TestReadMonthlyFile(t *testing.T) {
 	}
 	shouldBe["spendings"] = append(shouldBe["spendings"],
 		moneyExchange{42.24, date, "cat food shop", ""})
+
+	if !reflect.DeepEqual(entries, shouldBe) {
+		t.Errorf("readMonthlyFile() failed: got\n%v\nwanted\n%v",
+			entries, shouldBe)
+	}
+}
+
+func TestReadAllMonthlyFiles(t *testing.T) {
+	files, err := ioutil.ReadDir("testdata")
+	if err != nil {
+		t.Fatal("ReadDir failed in TestReadAllMonthlyFiles", err)
+	}
+	entries, err := readAllMonthlyFiles(files, "testdata")
+	if err != nil {
+		t.Error("readMonthlyFile() failed")
+		t.Fatal(err)
+	}
+	december, err := readMonthlyFile("testdata/november-19.yml")
+	if err != nil {
+		t.Error("readMonthlyFile() for November failed")
+		t.Fatal(err)
+	}
+	november, err := readMonthlyFile("testdata/december-20.yml")
+	if err != nil {
+		t.Error("readMonthlyFile() for December failed")
+		t.Fatal(err)
+	}
+	shouldBe := make(map[string][]moneyExchange)
+	for _, entry := range november["spendings"] {
+		shouldBe["spendings"] = append(shouldBe["spendings"], entry)
+	}
+	for _, entry := range november["earnings"] {
+		shouldBe["earnings"] = append(shouldBe["earnings"], entry)
+	}
+	for _, entry := range december["spendings"] {
+		shouldBe["spendings"] = append(shouldBe["spendings"], entry)
+	}
+	for _, entry := range december["earnings"] {
+		shouldBe["earnings"] = append(shouldBe["earnings"], entry)
+	}
 
 	if !reflect.DeepEqual(entries, shouldBe) {
 		t.Errorf("readMonthlyFile() failed: got\n%v\nwanted\n%v",
