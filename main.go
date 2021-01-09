@@ -29,8 +29,9 @@ type moneyExchange struct {
 type kvlist []kv
 
 type kv struct {
-	key   string
-	value float64
+	key        string
+	value      float64
+	percentage float64
 }
 
 func (kvl kvlist) Len() int {
@@ -239,6 +240,7 @@ func printSummary(earningSum, spendingSum, delta float64) {
 }
 
 func calcEarnings(date dateFilter, e map[string][]moneyExchange) []kv {
+	earningSum, _, _ := calcSummary(date, e)
 	earnings := make([]kv, 0)
 OUTER:
 	for _, entry := range e["earnings"] {
@@ -253,9 +255,14 @@ OUTER:
 			earnings[n].value += entry.Amount
 			continue OUTER
 		}
-		earnings = append(earnings, kv{entry.With, entry.Amount})
+		earnings = append(earnings, kv{entry.With, entry.Amount, 0})
 	}
 	sort.Sort(sort.Reverse(kvlist(earnings)))
+
+	for n := range earnings {
+		earnings[n].percentage = earnings[n].value / earningSum * 100
+	}
+
 	return earnings
 }
 
@@ -264,13 +271,13 @@ func printEarnings(earnings []kv) {
 		fmt.Println("No money was earnt for that period")
 	}
 	for n := range earnings {
-		fmt.Printf("From %-25s: we earnt $%.2f\n", earnings[n].key,
-			earnings[n].value)
+		fmt.Printf("From %-25s: we earnt $%.2f, this is %.2f%%\n",
+			earnings[n].key, earnings[n].value, earnings[n].percentage)
 	}
 }
 
 func calcSpendings(date dateFilter, e map[string][]moneyExchange, details bool) []kv {
-
+	_, spendingSum, _ := calcSummary(date, e)
 	spendings := make([]kv, 0)
 OUTER:
 	for _, entry := range e["spendings"] {
@@ -285,7 +292,7 @@ OUTER:
 				spendings[n].value += entry.Amount
 				continue OUTER
 			}
-			spendings = append(spendings, kv{entry.With, entry.Amount})
+			spendings = append(spendings, kv{entry.With, entry.Amount, 0})
 		} else {
 			for n := range spendings {
 				if spendings[n].key != entry.Category {
@@ -294,17 +301,23 @@ OUTER:
 				spendings[n].value += entry.Amount
 				continue OUTER
 			}
-			spendings = append(spendings, kv{entry.Category, entry.Amount})
+			spendings = append(spendings, kv{entry.Category,
+				entry.Amount, 0})
 		}
 	}
+
+	for n := range spendings {
+		spendings[n].percentage = spendings[n].value / spendingSum * 100
+	}
+
 	sort.Sort(sort.Reverse(kvlist(spendings)))
 	return spendings
 }
 
 func printSpendings(spendings []kv) {
 	for n := range spendings {
-		fmt.Printf("For %-20s: we spent $%.2f\n", spendings[n].key,
-			spendings[n].value)
+		fmt.Printf("For %-20s: we spent $%.2f, this is %.2f%%\n",
+			spendings[n].key, spendings[n].value, spendings[n].percentage)
 	}
 }
 

@@ -172,8 +172,10 @@ func TestCalcSummary(t *testing.T) {
 
 func TestCalcEarnings(t *testing.T) {
 	shouldBeEarnings := make([]kv, 0)
-	shouldBeEarnings = append(shouldBeEarnings, kv{"Company", 5443})
-	shouldBeEarnings = append(shouldBeEarnings, kv{"Santa Claus", 5})
+	shouldBeEarnings = append(shouldBeEarnings, kv{"Company", 5443,
+		99.90822320117474})
+	shouldBeEarnings = append(shouldBeEarnings, kv{"Santa Claus", 5,
+		0.09177679882525697})
 
 	files, err := ioutil.ReadDir("testdata")
 	if err != nil {
@@ -203,9 +205,12 @@ func TestCalcSpendings(t *testing.T) {
 
 	// without details
 	shouldBeSpendings := make([]kv, 0)
-	shouldBeSpendings = append(shouldBeSpendings, kv{"home", 1234})
-	shouldBeSpendings = append(shouldBeSpendings, kv{"wine", 73.31})
-	shouldBeSpendings = append(shouldBeSpendings, kv{"cat", 55.61})
+	shouldBeSpendings = append(shouldBeSpendings, kv{"home", 1234,
+		90.54089748481204})
+	shouldBeSpendings = append(shouldBeSpendings, kv{"wine", 73.31,
+		5.378892378129311})
+	shouldBeSpendings = append(shouldBeSpendings, kv{"cat", 55.61,
+		4.0802101370586685})
 	spendings := calcSpendings(date, e, false)
 	if !reflect.DeepEqual(spendings, shouldBeSpendings) {
 		t.Error("calcSpendings() no details spendings result is unexpected:")
@@ -214,9 +219,12 @@ func TestCalcSpendings(t *testing.T) {
 
 	// with details
 	shouldBeSpendings = make([]kv, 0)
-	shouldBeSpendings = append(shouldBeSpendings, kv{"rent", 1234})
-	shouldBeSpendings = append(shouldBeSpendings, kv{"saq", 73.31})
-	shouldBeSpendings = append(shouldBeSpendings, kv{"cat food shop", 55.61})
+	shouldBeSpendings = append(shouldBeSpendings, kv{"rent", 1234,
+		90.54089748481204})
+	shouldBeSpendings = append(shouldBeSpendings, kv{"saq", 73.31,
+		5.378892378129311})
+	shouldBeSpendings = append(shouldBeSpendings, kv{"cat food shop", 55.61,
+		4.0802101370586685})
 
 	spendings = calcSpendings(date, e, true)
 	if !reflect.DeepEqual(spendings, shouldBeSpendings) {
