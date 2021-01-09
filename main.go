@@ -266,15 +266,15 @@ OUTER:
 	return earnings
 }
 
-func printEarnings(earnings []kv) {
-	if len(earnings) == 0 {
+func printIngs(data []kv) {
+	if len(data) == 0 {
 		fmt.Println("No money was earnt for that period")
 	}
-	for n := range earnings {
-		percentage := fmt.Sprintf("%.2f%%", earnings[n].percentage)
-		value := fmt.Sprintf("$%.2f,", earnings[n].value)
+	for n := range data {
+		percentage := fmt.Sprintf("%.2f%%", data[n].percentage)
+		value := fmt.Sprintf("$%.2f,", data[n].value)
 		fmt.Printf("From %-25s: we earnt %-11s this is %6s\n",
-			earnings[n].key, value, percentage)
+			data[n].key, value, percentage)
 	}
 }
 
@@ -316,15 +316,6 @@ OUTER:
 	return spendings
 }
 
-func printSpendings(spendings []kv) {
-	for n := range spendings {
-		percentage := fmt.Sprintf("%.2f%%", spendings[n].percentage)
-		value := fmt.Sprintf("$%.2f,", spendings[n].value)
-		fmt.Printf("For %-20s: we spent %-11s this is %6s\n",
-			spendings[n].key, value, percentage)
-	}
-}
-
 func main() {
 	mode, date, dataPath, details, err := cli()
 	if err != nil {
@@ -358,9 +349,9 @@ func main() {
 	case "summary":
 		printSummary(calcSummary(date, e))
 	case "earnings":
-		printEarnings(calcEarnings(date, e))
+		printIngs(calcEarnings(date, e))
 	case "spendings":
-		printSpendings(calcSpendings(date, e, details))
+		printIngs(calcSpendings(date, e, details))
 	default:
 		log.Fatal("How did you end up here pal?")
 	}
