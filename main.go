@@ -264,7 +264,7 @@ func printEarnings(earnings []kv) {
 		fmt.Println("No money was earnt for that period")
 	}
 	for n := range earnings {
-		fmt.Printf("From %v: we earnt $%.2f\n", earnings[n].key,
+		fmt.Printf("From %-25s: we earnt $%.2f\n", earnings[n].key,
 			earnings[n].value)
 	}
 }
@@ -303,7 +303,7 @@ OUTER:
 
 func printSpendings(spendings []kv) {
 	for n := range spendings {
-		fmt.Printf("For %v: we spent $%.2f\n", spendings[n].key,
+		fmt.Printf("For %-20s: we spent $%.2f\n", spendings[n].key,
 			spendings[n].value)
 	}
 }
