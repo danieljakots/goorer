@@ -165,9 +165,10 @@ func calcSummary(date dateFilter, entries map[string][]moneyExchange) (float64,
 	var spendingSum float64
 
 	for _, entry := range entries["spendings"] {
-		if acceptDate(date, entry.Date) {
-			spendingSum = spendingSum + entry.Amount
+		if !acceptDate(date, entry.Date) {
+			continue
 		}
+		spendingSum = spendingSum + entry.Amount
 	}
 	var earningSum float64
 	for _, entry := range entries["earnings"] {
@@ -199,9 +200,10 @@ func printSummary(earningSum, spendingSum, delta float64) {
 func calcEarnings(date dateFilter, e map[string][]moneyExchange) (map[string]float64) {
 	earnings := make(map[string]float64)
 	for _, entry := range e["earnings"] {
-		if acceptDate(date, entry.Date) {
-			earnings[entry.With] += entry.Amount
+		if !acceptDate(date, entry.Date) {
+			continue
 		}
+		earnings[entry.With] += entry.Amount
 	}
 	return earnings
 }
