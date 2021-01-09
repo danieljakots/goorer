@@ -182,6 +182,9 @@ func TestCalcEarnings(t *testing.T) {
 		t.Fatal("ReadDir failed in TestCalcEarnings", err)
 	}
 	entries, err := readAllMonthlyFiles(files, "testdata")
+	if err != nil {
+		t.Fatal("readALlMonthlyFiles failed in TestCalcEarnings", err)
+	}
 	date := dateFilter{time.Now(), "null"}
 
 	earnings := calcEarnings(date, entries)
