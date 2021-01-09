@@ -78,10 +78,12 @@ func printHelp() {
 		"path/to/data\n")
 	fmt.Println("Each subcommand accepts a --date YYYY[-MM] to filter on a " +
 		"subset of entries")
+	fmt.Println("The spendings subcommand accept a -d/--details. This prints " +
+		"spendings\nwithout using categories.")
 	os.Exit(1)
 }
 
-func cli() (string, dateFilter, string, error) {
+func cli() (string, dateFilter, string, bool, error) {
 	summary := flag.NewFlagSet("summary", flag.ExitOnError)
 	dateSummary := summary.String("date", "",
 		"Focus on entries at given date (YYYY[-MM] format")
@@ -91,11 +93,13 @@ func cli() (string, dateFilter, string, error) {
 	spendings := flag.NewFlagSet("spendings", flag.ExitOnError)
 	dateSpendings := spendings.String("date", "",
 		"Focus on spendings at given date (YYYY[-MM] format")
+	dSpendings := spendings.Bool("d", false, "Details mode")
+	detailsSpendings := spendings.Bool("details", false, "Details mode")
 
 	if len(os.Args) < 2 {
 		err := errors.New("You need to pick a sucommand. " +
 			"Available subcommands are summary, earnings, and spendings")
-		return "", dateFilter{}, "", err
+		return "", dateFilter{}, "", false, err
 	}
 
 	var date dateFilter
@@ -132,7 +136,16 @@ func cli() (string, dateFilter, string, error) {
 		fmt.Println("Wrong subcommands")
 		printHelp()
 	}
-	return os.Args[1], date, dataPath, err
+
+	var details bool
+	if *dSpendings {
+		details = true
+	}
+	if *detailsSpendings {
+		details = true
+	}
+
+	return os.Args[1], date, dataPath, details, err
 }
 
 func acceptDate(dateCli dateFilter, dateEntry time.Time) bool {
@@ -218,12 +231,18 @@ func printEarnings(earnings map[string]float64, order []float64) {
 	}
 }
 
-func calcSpendings(date dateFilter, e map[string][]moneyExchange) (map[string]float64,
-	[]float64) {
+func calcSpendings(date dateFilter, e map[string][]moneyExchange, details bool) (
+	map[string]float64, []float64) {
+
 	spendings := make(map[string]float64)
 	reverseSpendings := make(map[float64]string)
 	for _, entry := range e["spendings"] {
-		if acceptDate(date, entry.Date) {
+		if !acceptDate(date, entry.Date) {
+			continue
+		}
+		if details {
+			spendings[entry.With] += entry.Amount
+		} else {
 			spendings[entry.Category] += entry.Amount
 		}
 	}
@@ -251,7 +270,7 @@ func printSpendings(spendings map[string]float64, order []float64) {
 }
 
 func main() {
-	mode, date, dataPath, err := cli()
+	mode, date, dataPath, details, err := cli()
 	if err != nil {
 		log.Print("Couldn't parse cli: ", err)
 		printHelp()
@@ -298,7 +317,7 @@ func main() {
 	case "earnings":
 		printEarnings(calcEarnings(date, e))
 	case "spendings":
-		printSpendings(calcSpendings(date, e))
+		printSpendings(calcSpendings(date, e, details))
 	default:
 		log.Fatal("How did you end up here pal?")
 	}

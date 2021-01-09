@@ -132,11 +132,6 @@ func TestCalcEarnings(t *testing.T) {
 }
 
 func TestCalcSpendings(t *testing.T) {
-	shouldBeSpendings := make(map[string]float64)
-	shouldBeSpendings["home"] = 1234
-	shouldBeSpendings["cat"] = 42.24
-	shouldBeOrder := []float64{1234.0, 42.24}
-
 	date := dateFilter{time.Now(), "null"}
 	e, _ := readMonthlyFile("testdata/december-20.yml")
 	categories, err := readCategoriesFile("testdata/categories.yml")
@@ -147,13 +142,35 @@ func TestCalcSpendings(t *testing.T) {
 	for n := range e["spendings"] {
 		e["spendings"][n].Category = categories[e["spendings"][n].With]
 	}
-	spendings, order := calcSpendings(date, e)
+
+	// without details
+	shouldBeSpendings := make(map[string]float64)
+	shouldBeSpendings["home"] = 1234
+	shouldBeSpendings["cat"] = 42.24
+	shouldBeOrder := []float64{1234.0, 42.24}
+	spendings, order := calcSpendings(date, e, false)
 	if !reflect.DeepEqual(spendings, shouldBeSpendings) {
-		t.Error("calcSpendings() spendings result is unexpected:")
+		t.Error("calcSpendings() no details spendings result is unexpected:")
 		t.Errorf("got %v, wanted %v", spendings, shouldBeSpendings)
 	}
 	if !reflect.DeepEqual(order, shouldBeOrder) {
-		t.Error("calcSpendings() order result is unexpected:")
+		t.Error("calcSpendings() no details order result is unexpected:")
+		t.Errorf("got %v, wanted %v", order, shouldBeOrder)
+	}
+
+	// with details
+	shouldBeSpendings = make(map[string]float64)
+	shouldBeSpendings["rent"] = 1234
+	shouldBeSpendings["cat food shop"] = 42.24
+	shouldBeOrder = []float64{1234.0, 42.24}
+
+	spendings, order = calcSpendings(date, e, true)
+	if !reflect.DeepEqual(spendings, shouldBeSpendings) {
+		t.Error("calcSpendings() w/ details spendings result is unexpected:")
+		t.Errorf("got %v, wanted %v", spendings, shouldBeSpendings)
+	}
+	if !reflect.DeepEqual(order, shouldBeOrder) {
+		t.Error("calcSpendings() w/ details order result is unexpected:")
 		t.Errorf("got %v, wanted %v", order, shouldBeOrder)
 	}
 }
