@@ -316,6 +316,20 @@ OUTER:
 	return spendings
 }
 
+func populateCategories(categories map[string]string, e map[string][]moneyExchange) (
+	map[string][]moneyExchange, error) {
+	for n := range e["spendings"] {
+		if cat, ok := categories[e["spendings"][n].With]; ok {
+			e["spendings"][n].Category = cat
+			continue
+		}
+		crafterErr := fmt.Sprintf("Couldn't find category for %v",
+			e["spendings"][n].With)
+		return nil, errors.New(crafterErr)
+	}
+	return e, nil
+}
+
 func main() {
 	mode, date, dataPath, details, err := cli()
 	if err != nil {
@@ -340,13 +354,9 @@ func main() {
 
 	// Populate the Category field for each spendings entry
 	if mode != "summary" {
-		for n := range e["spendings"] {
-			if cat, ok := categories[e["spendings"][n].With]; ok {
-				e["spendings"][n].Category = cat
-				continue
-			}
-			log.Fatal("Couldn't find category for ",
-				e["spendings"][n].With)
+		e, err = populateCategories(categories, e)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

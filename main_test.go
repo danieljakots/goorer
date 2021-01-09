@@ -155,6 +155,71 @@ func TestParseArgDate(t *testing.T) {
 	}
 }
 
+func TestPopulateCategories(t *testing.T) {
+	categories, err := readCategoriesFile("testdata/categories.yml")
+	if err != nil {
+		t.Fatal("Couldn't parse categories file: ", err)
+	}
+	e, err := readMonthlyFile("testdata/december-20.yml")
+	if err != nil {
+		t.Error("readMonthlyFile() failed")
+		t.Fatal(err)
+	}
+
+	e, err = populateCategories(categories, e)
+	if err != nil {
+		t.Fatal("populateCategories failed", err)
+	}
+
+	shouldBe := make(map[string][]moneyExchange, 4)
+	date, err := time.Parse("2006-01-02", "2020-12-25")
+	if err != nil {
+		t.Error("time.Parse in readMonthlyFile() failed")
+		t.Fatal(err)
+	}
+	shouldBe["earnings"] = append(shouldBe["earnings"],
+		moneyExchange{4321.0, date, "Company", ""})
+	shouldBe["earnings"] = append(shouldBe["earnings"],
+		moneyExchange{5.0, date, "Santa Claus", ""})
+
+	date, err = time.Parse("2006-01-02", "2020-12-01")
+	if err != nil {
+		t.Error("time.Parse in readMonthlyFile() failed")
+		t.Fatal(err)
+	}
+	shouldBe["spendings"] = append(shouldBe["spendings"],
+		moneyExchange{1234.0, date, "rent", "home"})
+
+	date, err = time.Parse("2006-01-02", "2020-12-12")
+	if err != nil {
+		t.Error("time.Parse in readMonthlyFile() failed")
+		t.Fatal(err)
+	}
+	shouldBe["spendings"] = append(shouldBe["spendings"],
+		moneyExchange{13.37, date, "cat food shop", "cat"})
+
+	date, err = time.Parse("2006-01-02", "2020-12-21")
+	if err != nil {
+		t.Error("time.Parse in readMonthlyFile() failed")
+		t.Fatal(err)
+	}
+	shouldBe["spendings"] = append(shouldBe["spendings"],
+		moneyExchange{73.31, date, "saq", "wine"})
+
+	date, err = time.Parse("2006-01-02", "2020-12-25")
+	if err != nil {
+		t.Error("time.Parse in readMonthlyFile() failed")
+		t.Fatal(err)
+	}
+	shouldBe["spendings"] = append(shouldBe["spendings"],
+		moneyExchange{42.24, date, "cat food shop", "cat"})
+
+	if !reflect.DeepEqual(e, shouldBe) {
+		t.Error("populateCategories() result is unexpected:")
+		t.Fatalf("got %v, wanted %v", e, shouldBe)
+	}
+}
+
 func TestCalcSummary(t *testing.T) {
 	shouldBeEarning := 4321.00
 	shouldBeSpending := 1362.9
