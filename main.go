@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"path"
 	"os"
 	"sort"
 	"time"
@@ -276,7 +277,7 @@ func main() {
 		printHelp()
 	}
 
-	categories, err := readCategoriesFile(dataPath + "categories.yml")
+	categories, err := readCategoriesFile(path.Join(dataPath, "categories.yml"))
 	if err != nil {
 		log.Fatal("Couldn't parse categories file: ", err)
 	}
@@ -292,7 +293,7 @@ func main() {
 			continue
 		}
 		// XXX use FS proper join
-		fileEntries, err := readMonthlyFile(dataPath + file.Name())
+		fileEntries, err := readMonthlyFile(path.Join(dataPath, file.Name()))
 		if err != nil {
 			log.Fatal("Couldn't parse records file: ", err)
 		}
