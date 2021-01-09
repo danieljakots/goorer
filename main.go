@@ -308,7 +308,8 @@ func main() {
 		}
 		fileEntries, err := readMonthlyFile(path.Join(dataPath, file.Name()))
 		if err != nil {
-			log.Fatal("Couldn't parse records file: ", err)
+			log.Fatalf("Couldn't parse records file %v: %v",
+				file.Name(), err)
 		}
 		for _, spending := range fileEntries["spendings"] {
 			e["spendings"] = append(e["spendings"], spending)
