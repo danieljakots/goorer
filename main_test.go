@@ -142,7 +142,7 @@ func TestCalcSpendings(t *testing.T) {
 
 	date := dateFilter{time.Now(), "null"}
 	e, _ := readMonthlyFile("testdata/december-20.yml")
-	categories, err := readCategoriesFile(dataPath + "categories.yml")
+	categories, err := readCategoriesFile("testdata/categories.yml")
 	if err != nil {
 		t.Fatal("Couldn't parse categories file: ", err)
 	}

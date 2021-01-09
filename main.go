@@ -13,8 +13,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-const dataPath = "testdata/"
-
 type dateFilter struct {
 	date      time.Time
 	precision string
@@ -76,12 +74,13 @@ func parseCliDate(dateCli string) (dateFilter, error) {
 }
 
 func printHelp() {
-	fmt.Println("usage:", os.Args[0], "[-h] {summary, earnings, spendings} ")
+	fmt.Println("usage:", os.Args[0], "[-h] {summary, earnings, spendings} " +
+		"path/to/data")
 	fmt.Println("      ", os.Args[0], "each subcommand accepts a -date YYYY[-MM]")
 	os.Exit(1)
 }
 
-func cli() (string, dateFilter, error) {
+func cli() (string, dateFilter, string, error) {
 	summary := flag.NewFlagSet("summary", flag.ExitOnError)
 	dateSummary := summary.String("date", "",
 		"Focus on entries at given date (YYYY[-MM] format")
@@ -95,28 +94,44 @@ func cli() (string, dateFilter, error) {
 	if len(os.Args) < 2 {
 		err := errors.New("You need to pick a sucommand. " +
 			"Available subcommands are summary, earnings, and spendings")
-		return "", dateFilter{}, err
+		return "", dateFilter{}, "", err
 	}
 
 	var date dateFilter
 	var err error
+	var dataPath string
 	switch os.Args[1] {
 	case "summary":
 		summary.Parse(os.Args[2:])
 		date, err = parseCliDate(*dateSummary)
+		if len(summary.Args()) == 1 {
+			dataPath = summary.Args()[0]
+		} else {
+			printHelp()
+		}
 	case "earnings":
 		earnings.Parse(os.Args[2:])
 		date, err = parseCliDate(*dateEarnings)
+		if len(earnings.Args()) == 1 {
+			dataPath = earnings.Args()[0]
+		} else {
+			printHelp()
+		}
 	case "spendings":
 		spendings.Parse(os.Args[2:])
 		date, err = parseCliDate(*dateSpendings)
+		if len(spendings.Args()) == 1 {
+			dataPath = spendings.Args()[0]
+		} else {
+			printHelp()
+		}
 	case "-h", "-help", "--help":
 		printHelp()
 	default:
 		fmt.Println("Wrong subcommands")
 		printHelp()
 	}
-	return os.Args[1], date, err
+	return os.Args[1], date, dataPath, err
 }
 
 func acceptDate(dateCli dateFilter, dateEntry time.Time) bool {
@@ -235,7 +250,7 @@ func printSpendings(spendings map[string]float64, order []float64) {
 }
 
 func main() {
-	mode, date, err := cli()
+	mode, date, dataPath, err := cli()
 	if err != nil {
 		log.Print("Couldn't parse cli: ", err)
 		printHelp()
