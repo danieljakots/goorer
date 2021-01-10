@@ -98,9 +98,9 @@ From Santa Claus              : we earnt $5.00,      this is  0.09%
 
 ~~~
 $ goorer spendings testdata
-From home                     : we earnt $3445.00,   this is 94.54%
-From cat                      : we earnt $125.57,    this is  3.45%
-From wine                     : we earnt $73.31,     this is  2.01%
+For home                     : we spent $3445.00,   this is 94.54%
+For cat                      : we spent $125.57,    this is  3.45%
+For wine                     : we spent $73.31,     this is  2.01%
 ~~~
 
 ### Filter by date
@@ -114,7 +114,7 @@ From Company                  : we earnt $1122.00,   this is 100.00%
 
 ~~~
 $ goorer spendings --details testdata
-From rent                     : we earnt $3445.00,   this is 94.54%
-From cat food shop            : we earnt $125.57,    this is  3.45%
-From saq                      : we earnt $73.31,     this is  2.01%
+For rent                     : we spent $3445.00,   this is 94.54%
+For cat food shop            : we spent $125.57,    this is  3.45%
+For saq                      : we spent $73.31,     this is  2.01%
 ~~~

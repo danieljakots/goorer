@@ -270,15 +270,23 @@ OUTER:
 	return earnings
 }
 
-func printIngs(data []kv) {
+func printIngs(data []kv, mode string) {
 	if len(data) == 0 {
 		fmt.Println("No money was earnt for that period")
+	}
+	var direction, verb string
+	if mode == "earnings" {
+		direction = "From"
+		verb = "earnt"
+	} else if mode == "spendings" {
+		direction = "For"
+		verb = "spent"
 	}
 	for n := range data {
 		percentage := fmt.Sprintf("%.2f%%", data[n].percentage)
 		value := fmt.Sprintf("$%.2f,", data[n].value)
-		fmt.Printf("From %-25s: we earnt %-11s this is %6s\n",
-			data[n].key, value, percentage)
+		fmt.Printf("%v %-25s: we %v %-11s this is %6s\n", direction,
+			data[n].key, verb, value, percentage)
 	}
 }
 
@@ -368,9 +376,9 @@ func main() {
 	case "summary":
 		printSummary(calcSummary(date, e))
 	case "earnings":
-		printIngs(calcEarnings(date, e))
+		printIngs(calcEarnings(date, e), "earnings")
 	case "spendings":
-		printIngs(calcSpendings(date, e, details))
+		printIngs(calcSpendings(date, e, details), "spendings")
 	default:
 		log.Fatal("How did you end up here pal?")
 	}
