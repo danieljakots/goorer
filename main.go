@@ -202,8 +202,36 @@ func printEarnings(earnings map[string]float64, order []float64) {
 	}
 }
 
-func printSpendings() {
-	fmt.Println("spendings")
+func calcSpendings(date dateFilter, e map[string][]moneyExchange) (map[string]float64,
+	[]float64){
+	spendings := make(map[string]float64)
+	reverseSpendings := make(map[float64]string)
+	for _, entry := range e["spendings"] {
+		if acceptDate(date, entry.Date) {
+			spendings[entry.Category] += entry.Amount
+		}
+	}
+	order := make([]float64, len(spendings))
+	// Hopes And Prayers that there won't be conflict(s)
+	i := 0
+	for source, amount := range spendings {
+		reverseSpendings[amount] = source
+		order[i] = amount
+		i++
+	}
+	if len(spendings) != len(reverseSpendings) {
+		log.Fatal("The sums of entries from two differents source are the " +
+			"same, and somehow, that's a problem.")
+	}
+	sort.Sort(sort.Reverse(sort.Float64Slice(order)))
+
+	return spendings, order
+}
+
+func printSpendings(spendings map[string]float64, order []float64) {
+	for source, amount := range spendings {
+		fmt.Printf("For %v: we spent $%.2f\n", source, amount)
+	}
 }
 
 func main() {
@@ -254,7 +282,7 @@ func main() {
 	case "earnings":
 		printEarnings(calcEarnings(date, e))
 	case "spendings":
-		printSpendings()
+		printSpendings(calcSpendings(date,e))
 	default:
 		log.Fatal("How did you end up here pal?")
 	}
