@@ -4,6 +4,10 @@ Goorer is a personal finance software. It's loosely based on
 [poorer](https://framagit.org/Steap/poorer). Goorer is written in go — hence
 the name, and has a CLI instead of a web one.
 
+The reason for this rewrite is I got tired of maintaining my own poorer fork.
+Upstream didn't care about my bug fixes and misc improvements. I had to use a
+virtual env which frequently stop working for no reason.
+
 # Using goorer
 
 ## Installation
