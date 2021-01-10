@@ -65,8 +65,7 @@ you just need to search and replace `to:` and `from:` to `with:`.
 Here's how to use goorer:
 
 ~~~
-$ goorer
-2021/01/10 16:31:14 Couldn't parse cli: You need to pick a sucommand. Available subcommands are summary, earnings, and spendings
+$ goorer -h
 usage: goorer [-h] {summary, earnings, spendings} path/to/data
 
 Each subcommand accepts a --date YYYY[-MM] to filter on a subset of entries
