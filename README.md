@@ -72,7 +72,8 @@ Each subcommand accepts a --date YYYY[-MM] to filter on a subset of entries
 The spendings subcommand accept a -d/--details. This prints spendings
 ~~~
 
-Here's what it shows. testdata is a directory with some data for unit tests.
+Here's what it looks like:
+(testdata is the directory with some data for unit tests).
 
 ### Summary
 
