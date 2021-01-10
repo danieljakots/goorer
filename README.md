@@ -12,7 +12,7 @@ virtual env which frequently stop working for no reason.
 
 ## Installation
 
-Get the reposity and run `make build`. It will produce the *goorer* binary.
+Get the repository and run `make build`. It will produce the *goorer* binary.
 
 ## Goorer's data
 
