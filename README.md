@@ -73,6 +73,7 @@ The spendings subcommand accept a -d/--details. This prints spendings
 ~~~
 
 Here's what it looks like:
+
 (testdata is the directory with some data for unit tests).
 
 ### Summary
