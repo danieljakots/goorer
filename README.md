@@ -74,6 +74,7 @@ usage: goorer [-h] {summary, earnings, spendings} path/to/data
 
 Each subcommand accepts a --date YYYY[-MM] to filter on a subset of entries
 The spendings subcommand accept a -d/--details. This prints spendings
+without using categories.
 ~~~
 
 Here's what it looks like:
