@@ -15,6 +15,12 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// The linker shall replace these strings
+var (
+	COMMIT = "1234567"
+	DATE   = "1970-01-01"
+)
+
 type dateFilter struct {
 	date      time.Time
 	precision string
@@ -126,6 +132,7 @@ func printHelp() {
 		"subset of entries")
 	fmt.Println("The spendings subcommand accept a -d/--details. This prints " +
 		"spendings\nwithout using categories.")
+	fmt.Printf("\n%v was built on %v from commit %v\n", os.Args[0], DATE, COMMIT)
 	os.Exit(1)
 }
 
