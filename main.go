@@ -236,7 +236,7 @@ func calcSummary(date dateFilter, entries map[string][]moneyExchange) (float64,
 }
 
 func printSummary(earningSum, spendingSum, delta float64) {
-	fmt.Printf("You earnt $%.2f\n", earningSum)
+	fmt.Printf("You earned $%.2f\n", earningSum)
 	fmt.Printf("You spent $%.2f\n", spendingSum)
 	if delta > 0 {
 		fmt.Printf("You saved $%.2f\n", delta)
@@ -279,12 +279,12 @@ OUTER:
 
 func printIngs(data []kv, mode string) {
 	if len(data) == 0 {
-		fmt.Println("No money was earnt for that period")
+		fmt.Println("No money was earned for that period")
 	}
 	var direction, verb string
 	if mode == "earnings" {
 		direction = "From"
-		verb = "earnt"
+		verb = "earned"
 	} else if mode == "spendings" {
 		direction = "For"
 		verb = "spent"

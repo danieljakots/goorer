@@ -85,7 +85,7 @@ Here's what it looks like:
 
 ~~~
 $ goorer summary testdata
-You earnt $5448.00
+You earned $5448.00
 You spent $3643.88
 You saved $1804.12
 You spent 66.88% of your earnings
@@ -95,8 +95,8 @@ You spent 66.88% of your earnings
 
 ~~~
 $ goorer earnings testdata
-From Company                  : we earnt $5443.00,   this is 99.91%
-From Santa Claus              : we earnt $5.00,      this is  0.09%
+From Company                  : we earned $5443.00,   this is 99.91%
+From Santa Claus              : we earned $5.00,      this is  0.09%
 ~~~
 
 ### Spendings
@@ -112,7 +112,7 @@ For wine                     : we spent $73.31,     this is  2.01%
 
 ~~~
 $ goorer earnings --date 2019 testdata
-From Company                  : we earnt $1122.00,   this is 100.00%
+From Company                  : we earned $1122.00,   this is 100.00%
 ~~~
 
 ### Don't use categories to print spendings
