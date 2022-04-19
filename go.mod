@@ -1,4 +1,4 @@
-module chown.me/goorer
+module go.chown.me/goorer
 
 go 1.14
 
